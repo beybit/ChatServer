@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  chatservice:
+    image: ${DOCKER_REGISTRY-}chatservice
+    build:
+      context: .
+      dockerfile: src/Services/ChatService/Dockerfile
+
+  notificationservice:
+    image: ${DOCKER_REGISTRY-}notificationservice
+    build:
+      context: .
+      dockerfile: src/Services/NotificationService/Dockerfile
+

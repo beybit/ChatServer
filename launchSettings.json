@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "chatservice": "StartDebugging",
+        "identity": "StartDebugging",
+        "charserver.blazorclient": "StartDebugging",
+        "notificationservice": "StartDebugging"
+      }
+    }
+  }
+}
