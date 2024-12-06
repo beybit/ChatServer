@@ -1,5 +1,6 @@
 ﻿using ChatService.Realtime.Models;
 using ChatService.Realtime.Services.Interfaces;
+using Quartz;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -43,10 +44,11 @@ namespace ChatService.Realtime.Services
             return null;
         }
 
-        public async Task<string[]> GetUserSessions(UserChatSession session)
+        public async Task<string[]> GetUserSessionsAsync()
         {
             var onlineUsers = await _cacheDatabase.SetMembersAsync(OnlineSetKey);
-            return onlineUsers.Cast<string>().ToArray();
+            if (onlineUsers == null) return null;
+            return Array.ConvertAll(onlineUsers, x => (string)x);
         }
     }
 }

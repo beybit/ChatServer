@@ -7,8 +7,8 @@ namespace ChatService.Application.Features.Users
     [Mapper]
     public static partial class UserMapper
     {
-        public static partial UserDto ToDto(User user);
+        //public static partial UserDto ToDto(User user);
 
-        public static partial IQueryable<UserDto> ProjectToDto(this IQueryable<User> q);
+        //public static partial IQueryable<UserDto> ProjectToDto(this IQueryable<User> q);
     }
 }
