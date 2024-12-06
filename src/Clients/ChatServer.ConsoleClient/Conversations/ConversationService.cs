@@ -13,7 +13,12 @@ using System.Threading.Tasks;
 
 namespace ChatServer.ConsoleClient.Conversations
 {
-    public abstract class ConversationService<T>
+    public interface IConversationSerice
+    {
+        Task ReceiveMessageAsync(SendMessageDto message);
+    }
+
+    public abstract class ConversationService<T> : IConversationSerice
             where T : class
     {
         const int MESSAGE_INPUT_PADDING = 2;
@@ -22,10 +27,6 @@ namespace ChatServer.ConsoleClient.Conversations
         private string _email;
         private readonly ConversationClient _conversationClient;
 
-        private Layout _chatMessagesLayout;
-        readonly ConcurrentQueue<ChatMessage> _chatMessages = new ConcurrentQueue<ChatMessage>();
-        private CancellationTokenSource? _cancellationSource;
-        
         public ConversationService(ConversationClient messagesClient)
         {
             _conversationClient = messagesClient;
@@ -35,7 +36,7 @@ namespace ChatServer.ConsoleClient.Conversations
 
         protected ConversationClient ConversationClient { get => _conversationClient; }
 
-        public abstract Task StartConversationAsync(string email, T conversation);
+        public abstract Task StartConversationAsync(string email, T target);
 
         protected async Task StartConversationInternalAsync(string email, IConversation<T> conversation)
         {
@@ -52,8 +53,10 @@ namespace ChatServer.ConsoleClient.Conversations
             {
                 var prompt = new TextPrompt<string>("").AllowEmpty();
                 message = prompt.Show(AnsiConsole.Console);
-                await SendMessageAsync(message);
-                _cancellationSource = null;
+                if(!string.IsNullOrEmpty(message))
+                {
+                    await SendMessageAsync(message);
+                }
             } while (!string.IsNullOrEmpty(message));
         }
 
@@ -86,15 +89,15 @@ namespace ChatServer.ConsoleClient.Conversations
             }
         }
 
-        public async void ReceiveMessageAsync(SendMessageDto message)
+        public async Task ReceiveMessageAsync(SendMessageDto message)
         {
-            if(message.FromConversationId == _conversation.ConversationId)
+            if(message.FromConversationId == _conversation.ConversationId && message.FromEmail != _email)
             {
                 AnsiConsole.Cursor.MoveLeft(Console.CursorLeft);
                 AnsiConsole.Cursor.MoveDown();
                 ConsoleWriteConversationMessage(message.Message, message.FromEmail, message.CreatedAt.ToLocalTime());
                 AnsiConsole.WriteLine();
-                await _conversationClient.MessageViewedAsync(new MessageViewedCommand { ConversationMessageId = message.FromConversationId });
+                await _conversationClient.MessageViewedAsync(new MessageViewedCommand { MessageId = message.MessageId });
             }
         }
 

@@ -9,6 +9,7 @@ namespace ChatService.Realtime.Services
     {
         IDatabase _cacheDatabase;
         private readonly ILogger<ChatSessionService> _logger;
+        const string OnlineSetKey = "OnlineUsers";
 
         public ChatSessionService(IDatabase cacheDatabase, ILogger<ChatSessionService> logger)
         {
@@ -18,14 +19,16 @@ namespace ChatService.Realtime.Services
 
         public async Task StartAsync(string userId, string sessionId)
         {
-            var chatSession = new UserChatSession(sessionId, userId);
+            var chatSession = new UserChatSession(userId, sessionId);
             await _cacheDatabase.StringSetAsync(userId, JsonSerializer.Serialize(chatSession));
+            await _cacheDatabase.SetAddAsync(OnlineSetKey, userId);
             _logger.LogDebug("User {UserId} chat session {SessionId} started", userId, sessionId);
         }
 
         public async Task StopAsync(string userId)
-        {
+        {            
             await _cacheDatabase.KeyDeleteAsync(userId);
+            await _cacheDatabase.SetRemoveAsync(OnlineSetKey, userId);
             _logger.LogDebug("User {UserId} chat session completed", userId);
         }
 
@@ -38,6 +41,12 @@ namespace ChatService.Realtime.Services
             }
 
             return null;
+        }
+
+        public async Task<string[]> GetUserSessions(UserChatSession session)
+        {
+            var onlineUsers = await _cacheDatabase.SetMembersAsync(OnlineSetKey);
+            return onlineUsers.Cast<string>().ToArray();
         }
     }
 }

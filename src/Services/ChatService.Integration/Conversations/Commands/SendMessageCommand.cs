@@ -15,6 +15,6 @@ namespace ChatService.Integration.Conversations.Commands
     }
     public class MessageViewedCommand : IRequest
     {
-        public required Guid ConversationMessageId { get; set; }
+        public required Guid MessageId { get; set; }
     }
 }

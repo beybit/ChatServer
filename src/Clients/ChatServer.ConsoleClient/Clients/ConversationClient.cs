@@ -20,6 +20,13 @@ namespace ChatServer.ConsoleClient.Clients
             return await response.ReadJson<StartConversationReply>();
         }
 
+        public async Task<StartConversationReply?> StartAsync(StartGroupConversationCommand command)
+        {
+            var response = await http.PostAsJsonAsync("/api/conversation/group", command);
+
+            return await response.ReadJson<StartConversationReply>();
+        }
+
         public async Task MessageViewedAsync(MessageViewedCommand command)
         {
             var response = await http.PostAsJsonAsync("/api/conversation/messages/viewed", command);

@@ -7,5 +7,7 @@ namespace ChatService.Realtime.Services.Interfaces
         Task StartAsync(string userId, string sessionId);
         Task StopAsync(string sessionId);
         Task<UserChatSession?> GetSessionAsync(string userId);
+
+        Task<string[]> GetUserSessions(UserChatSession session);
     }
 }

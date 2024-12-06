@@ -29,6 +29,10 @@ namespace ChatService.Controllers
         public async Task<StartConversationReply> Start(StartConversationCommand command)
              => await _mediator.SendHttpContext<StartConversationCommand, StartConversationReply>(HttpContext, command);
 
+        [HttpPost("group")]
+        public async Task<StartConversationReply> StartGroup(StartGroupConversationCommand command)
+             => await _mediator.SendHttpContext<StartGroupConversationCommand, StartConversationReply>(HttpContext, command);
+
         [HttpPost("messages")]
         public Task SendMessage(SendMessageCommand command)
              => _mediator.SendHttpContext(HttpContext, command);

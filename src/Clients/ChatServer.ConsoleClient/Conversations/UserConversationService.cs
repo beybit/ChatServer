@@ -4,6 +4,7 @@ using ChatService.Integration.Users.Dtos;
 
 namespace ChatServer.ConsoleClient.Conversations
 {
+
     public class UserConversationService : ConversationService<UserDto>
     {
         public UserConversationService(ConversationClient messagesClient) : base(messagesClient)
@@ -15,7 +16,7 @@ namespace ChatServer.ConsoleClient.Conversations
             var conversation = await ConversationClient.StartAsync(new StartConversationCommand { Email = user.Email });
             if(conversation != null)
             {
-                await StartConversationInternalAsync(email, new Conversation(conversation.ConversationId, user));
+                await StartConversationInternalAsync(email, new Conversation<UserDto>(conversation.ConversationId, user));
             }
             else
             {

@@ -1,10 +1,8 @@
 ﻿namespace ChatService.Integration.Users.Dtos
 {
 
-    public class UserDto
+    public record UserDto (string Email)
     {
-        public string Email { get; set; }
-
         public override string ToString() => Email;
     }
 }

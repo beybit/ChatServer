@@ -22,17 +22,19 @@ namespace ChatService.Application.Features.Conversations.Consumers
                 .Include(x => x.Message)
                     .ThenInclude(x => x.Sender)
                 .SingleAsync(x => x.Id == context.Message.ConversationMessageId, context.CancellationToken);
-            if (conversataionMessage.Status == Domain.ConversationMessageStatus.Created)
+            if (conversataionMessage.Status != Domain.ConversationMessageStatus.Seen
+                && conversataionMessage.Status != Domain.ConversationMessageStatus.SentToEmail)
             {
+                var groupName = await dbContext.ChatGroups.Where(x => x.ConversationId == conversataionMessage.ConversationUser.ConversationId).Select(x => x.Name).SingleOrDefaultAsync(context.CancellationToken);
                 await context.Publish(new SendEmail
                 {
                     MessageId = conversataionMessage.Id,
                     Email = conversataionMessage.ConversationUser.User.Email!,
-                    Subject = $"New message from {conversataionMessage.Message.Sender.Email}",
+                    Subject = $"New message from {conversataionMessage.Message.Sender.Email}" + (groupName == null ? "" : $" [{groupName}]"),
                     Body = conversataionMessage.Message.Text
                 });
 
-                conversataionMessage.Status = Domain.ConversationMessageStatus.Sent;
+                conversataionMessage.Status = Domain.ConversationMessageStatus.SentToEmail;
                 await dbContext.SaveChangesAsync(context.CancellationToken);
             }
         }

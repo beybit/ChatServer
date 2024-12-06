@@ -19,13 +19,14 @@ namespace ChatService.Application.Features.Conversations.Consumers
                 .Include(x => x.ConversationUser)
                     .ThenInclude(x => x.User)
                 .Include(x => x.Message)
+                    .ThenInclude(x => x.Sender)
                 .SingleAsync(x => x.Id == context.Message.ConversationMessageId, context.CancellationToken);
             if (conversataionMessage.Status == Domain.ConversationMessageStatus.Created)
             {
                 var isSent = await chatService.SendMessageAsync(conversataionMessage.ConversationUser.UserId, new SendMessageDto(
-                    conversataionMessage.Id,
+                    conversataionMessage.MessageId,
                     conversataionMessage.Message.Text,
-                    conversataionMessage.ConversationUser.User.Email!,
+                    conversataionMessage.Message.Sender.Email!,
                     conversataionMessage.ConversationUser.ConversationId,
                     conversataionMessage.Message.CreatedAt
                 ), context.CancellationToken);

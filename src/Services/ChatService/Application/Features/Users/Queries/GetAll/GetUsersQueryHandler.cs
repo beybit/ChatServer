@@ -13,10 +13,7 @@ namespace ChatService.Application.Features.Users.Queries.GetAll
         {
             return await dbContext.Users
                 .Where(x => x.Id != request.UserId)
-                .Select(x => new UserDto
-                {
-                    Email = x.Email!
-                })
+                .Select(x => new UserDto(x.Email!))
                 .ToListAsync(cancellationToken);
         }
     }

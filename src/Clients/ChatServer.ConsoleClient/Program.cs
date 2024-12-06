@@ -28,6 +28,7 @@ builder.Services.AddScoped<UsersClient>();
 builder.Services.AddScoped<ConversationClient>();
 
 builder.Services.AddScoped<UserConversationService>();
+builder.Services.AddScoped<GroupConversationService>();
 builder.Services.AddSingleton<ChatApp>();
 
 builder.Services.AddSingleton(x =>

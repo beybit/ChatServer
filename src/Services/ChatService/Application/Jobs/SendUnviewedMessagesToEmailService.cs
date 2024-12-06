@@ -28,10 +28,10 @@ namespace ChatService.Application.Jobs
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
 
-                var messageViewExpirationTime = DateTimeOffset.UtcNow.Add(-configuration.GetValue("MessageViewExpirationTime", TimeSpan.FromMinutes(1)));
+                var messageViewExpirationTime = DateTimeOffset.UtcNow.Add(-configuration.GetValue("MessageViewExpirationTime", TimeSpan.FromMinutes(5)));
 
                 var viewExpiredMessages = from cm in dbContext.ConversationMessages
-                                           where cm.Status == ConversationMessageStatus.Created && cm.CreatedAt < messageViewExpirationTime
+                                           where (cm.Status != ConversationMessageStatus.Seen && cm.Status != ConversationMessageStatus.SentToEmail) && cm.CreatedAt < messageViewExpirationTime
                                            select new SendMessageEmail(cm.Id);
 
                 await publishEndpoint.PublishBatch(viewExpiredMessages);

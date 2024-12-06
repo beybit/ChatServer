@@ -28,6 +28,7 @@ namespace ChatService.Application.Features.Conversations.Commands
 
             dbContext.Messages.Add(message);
 
+            var conversation = await dbContext.Conversations.SingleAsync(x => x.Id == request.Params.ConversationId, cancellationToken);
             var conversationUsers = await dbContext.ConversationUsers
                 .Where(x => x.UserId != request.UserId && x.ConversationId == request.Params.ConversationId)
                 .Select(x => new
@@ -48,7 +49,14 @@ namespace ChatService.Application.Features.Conversations.Commands
                             .ToList();
             await dbContext.ConversationMessages.AddRangeAsync(conversationMessages);
 
-            await publishEndpoint.PublishBatch(conversationMessages.Select(x => new SendConversationUserMessage(x.Id)), cancellationToken);
+            if(await dbContext.ChatGroups.AnyAsync(x => x.ConversationId == request.Params.ConversationId, cancellationToken))
+            {
+                await publishEndpoint.Publish(new SendConversationMessage(request.Params.ConversationId, message.Id), cancellationToken);
+            }
+            else
+            {
+                await publishEndpoint.PublishBatch(conversationMessages.Select(x => new SendConversationUserMessage(x.Id)), cancellationToken);
+            }
 
             await dbContext.SaveChangesAsync(cancellationToken);
             logger.LogDebug("Send message {@Message} command from user {UserId} completed", request.Params, request.UserId);

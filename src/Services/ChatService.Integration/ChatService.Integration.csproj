@@ -8,9 +8,4 @@
   <ItemGroup>
     <PackageReference Include="Mediatr" Version="12.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Groups\Commands\" />
-    <Folder Include="Groups\Dtos\" />
-    <Folder Include="Groups\Queries\" />
-  </ItemGroup>
 </Project>

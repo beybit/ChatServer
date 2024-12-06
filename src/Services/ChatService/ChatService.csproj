@@ -39,7 +39,4 @@
     <ProjectReference Include="..\ChatService.Integration\ChatService.Integration.csproj" />
     <ProjectReference Include="..\NotificationService.Integration\NotificationService.Integration.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Application\Features\Groups\" />
-  </ItemGroup>
 </Project>

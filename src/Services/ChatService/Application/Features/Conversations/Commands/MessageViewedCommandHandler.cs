@@ -12,7 +12,7 @@ namespace ChatService.Application.Features.Conversations.Commands
         public async Task Handle(UserRequest<MessageViewedCommand> request, CancellationToken cancellationToken)
         {
             var conversationMessage = await dbContext.ConversationMessages
-                .Where(x => x.Id == request.Params.ConversationMessageId && x.ConversationUser.UserId == request.UserId)
+                .Where(x => x.MessageId == request.Params.MessageId && x.ConversationUser.UserId == request.UserId)
                 .SingleOrDefaultAsync(cancellationToken);
             if(conversationMessage != null)
             {

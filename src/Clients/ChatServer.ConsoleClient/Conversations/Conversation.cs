@@ -2,12 +2,13 @@
 
 namespace ChatServer.ConsoleClient.Conversations
 {
-    public class Conversation : IConversation<UserDto>
+    public class Conversation<T> : IConversation<T>
+        where T : class
     {
         private readonly Guid _conversationId;
-        private readonly UserDto _user;
+        private readonly T _user;
 
-        public Conversation(Guid conversationId, UserDto user)
+        public Conversation(Guid conversationId, T user)
         {
             _conversationId = conversationId;
             _user = user;
